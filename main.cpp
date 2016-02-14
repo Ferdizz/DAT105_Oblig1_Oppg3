@@ -13,7 +13,7 @@ void saveDatabase();
 void restoreDatabase();
 void listEmployees();
 
-vector<Employee> db;
+vector<Employee*> db;
 
 int main() {
 
@@ -85,7 +85,7 @@ void addEmployee(){
         cin >> holidays;
 
         Employee *manager = new Manager(fn, ln, s, meetings, holidays);
-        db.push_back(*manager);
+        db.push_back(manager);
 
         cout << "Manager added to database!" << endl;
 
@@ -103,7 +103,7 @@ void addEmployee(){
 
         Employee *engineer = new Engineer(fn, ln, s, (cpp == 'Y' ? true : false),
                                           experience, discipline);
-        db.push_back(*engineer);
+        db.push_back(engineer);
 
         cout << "Engineer added to database!" << endl;
 
@@ -116,7 +116,7 @@ void addEmployee(){
         cin >> thesisTitle;
 
         Employee *researcher = new Researcher(fn, ln, s, graduatedAt, thesisTitle);
-        db.push_back(*researcher);
+        db.push_back(researcher);
 
         cout << "Researcher added to database!" << endl;
 
@@ -133,7 +133,7 @@ void deleteEmployee(){
     cin >> ln;
 
     for(int i = 0; i < db.size(); i++){
-        if(db[i].getLastName() == ln){
+        if(db[i]->getLastName() == ln){
             delete db[i];
             db.erase(db.begin() + i);
             deleted = true;
@@ -158,6 +158,6 @@ void restoreDatabase(){
 
 void listEmployees(){
     for(int i = 0; i < db.size(); i++){
-        db[i].toString();
+        cout << db[i]->toString();
     }
 };
