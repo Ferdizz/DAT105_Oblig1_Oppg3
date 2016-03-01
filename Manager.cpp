@@ -26,8 +26,9 @@ string Manager::toString() {
 }
 
 string Manager::toFile() {
-    //TODO
-    return Employee::toFile();
+    ostringstream s;
+    s << Employee::toFile() << "manager\n" << meetingsPerWeek << endl << holidaysPerYear << endl;
+    return s.str();
 }
 
 int Manager::getMeetingsPerWeek() {

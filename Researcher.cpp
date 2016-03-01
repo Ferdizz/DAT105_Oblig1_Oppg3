@@ -27,8 +27,9 @@ string Researcher::toString() {
 }
 
 string Researcher::toFile() {
-    //TODO
-    return Employee::toString();
+    ostringstream s;
+    s << Employee::toFile() << "researcher\n" << graduatedAt << endl << thesisTitle << endl;
+    return s.str();
 }
 
 

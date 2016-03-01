@@ -27,8 +27,10 @@ string Engineer::toString() {
 }
 
 string Engineer::toFile() {
-    //TODO
-    return Employee::toFile();
+    ostringstream s;
+    s << Employee::toFile() << "engineer\n" << (knowsCPlusPlus ? "yes" : "no") << endl << yearsOfExperience << endl <<
+    discipline << endl;
+    return s.str();
 }
 
 

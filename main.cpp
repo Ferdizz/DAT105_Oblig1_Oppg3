@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <sstream>
 #include "Employee.h"
 #include "Manager.h"
 #include "Engineer.h"
@@ -8,6 +10,8 @@
 using namespace std;
 
 void addEmployee();
+
+void addEmployee(vector<string> data);
 void deleteEmployee();
 void saveDatabase();
 void restoreDatabase();
@@ -27,6 +31,7 @@ int main() {
         << "5) List Employees\n" << "6) Exit\n" << endl << "Select an action: ";
 
         cin >> choice;
+        cout << endl;
 
         switch (choice){
             case 1:
@@ -59,9 +64,9 @@ void addEmployee(){
     string fn, ln;
     double s;
 
-    cout << "\nEmployee database - Add Employee:\n" << "a) Add a Manager\n"
+    cout << "Employee database - Add Employee:\n" << "a) Add a Manager\n"
     << "b) Add an Engineer\n" << "c) Add a Researcher\n" << "d) Cancel\n" << endl
-            << "Select an action: ";
+    << "Select an action: ";
 
     cin >> choice;
 
@@ -125,6 +130,54 @@ void addEmployee(){
     }
 }
 
+void addEmployee(vector<string> data) {
+    string fname, lname, employeeClass;
+    double salary;
+
+    fname = data.at(0);
+    lname = data.at(1);
+
+    stringstream(data.at(2)) >> salary;
+    employeeClass = data.at(3);
+
+    if (employeeClass == "manager") {
+
+        int meetings = stoi(data.at(4));
+        int holidays = stoi(data.at(5));
+
+        Employee *manager = new Manager(fname, lname, salary, meetings, holidays);
+        db.push_back(manager);
+        return;
+
+    } else if (employeeClass == "engineer") {
+
+        string knowsCPlusPlus = data.at(4);
+        int yearsOfExperience = stoi(data.at(5));
+        string discipline = data.at(6);
+
+        Employee *engineer = new Engineer(fname, lname, salary, (knowsCPlusPlus == "yes" ? true : false),
+                                          yearsOfExperience, discipline);
+        db.push_back(engineer);
+        return;
+
+    } else if (employeeClass == "researcher") {
+
+        string graduatedAt = data.at(4);
+        string thesisTitle = data.at(5);
+
+        Employee *researcher = new Researcher(fname, lname, salary, graduatedAt, thesisTitle);
+        db.push_back(researcher);
+        return;
+
+    } else {
+
+        cout << "ERROR: Something went wrong while adding employee from datafile!" << endl;
+        return;
+
+    }
+
+}
+
 void deleteEmployee(){
 
     bool deleted = false;
@@ -149,15 +202,67 @@ void deleteEmployee(){
 };
 
 void saveDatabase(){
+    string filename = "db.txt";
+
+    cout << "Save database as: ";
+    cin >> filename;
+
+    ofstream db_file(filename);
+
+    if (db_file.is_open()) {
+
+        for (int i = 0; i < db.size(); i++) {
+            db_file << db[i]->toFile() << ";;\n";
+        }
+
+        db_file.close();
+
+        cout << "Database successfully saved to " << filename << "!" << endl;
+
+    } else {
+        cout << "Unable to open file!" << endl;
+    }
 
 };
 
 void restoreDatabase(){
 
+    string line, filename;
+    vector<string> employeeData;
+
+    cout << "Enter filename: ";
+    cin >> filename;
+
+    ifstream db_file(filename);
+
+    if (db_file.is_open()) {
+
+        while (getline(db_file, line)) {
+
+            if (line == ";;") {
+                addEmployee(employeeData);
+                employeeData.clear();
+            } else {
+                employeeData.push_back(line);
+            }
+
+        }
+        db_file.close();
+
+    } else {
+        cout << "Unable to open file!" << endl;
+    }
+
 };
 
 void listEmployees(){
-    for(int i = 0; i < db.size(); i++){
-        cout << db[i]->toString();
+    if (!db.empty()) {
+        cout << "List of registered employees:\n-----------------------------" << endl;
+        for (int i = 0; i < db.size(); i++) {
+            cout << "Employee #" << (i + 1) << ":\n";
+            cout << db[i]->toString() << endl;
+        }
+    } else {
+        cout << "No employees saved in database!" << endl;
     }
 };

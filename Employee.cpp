@@ -55,6 +55,7 @@ string Employee::toString() {
 }
 
 string Employee::toFile() {
-    //TODO
-    return "";
+    ostringstream s;
+    s << firstname << endl << lastname << endl << salary << endl;
+    return s.str();
 }
